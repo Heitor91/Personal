@@ -1,0 +1,261 @@
+<ScreenControl>:
+    MenuPrincipal:
+        name:'menu_principal'
+    CadastroMP:
+        name:'cadastro_mprima'
+    CadastroEm:
+        name:'cadastro_embalagens'
+    ProducaoRec:
+        name:'producao_recheios'
+    ProducaoCho:
+        name:'producao_chocolates'
+    ProducaoPro:
+        name:'producao_produtos'
+<MenuPrincipal>
+    MDBoxLayout:
+        orientation:'vertical'
+        spacing:10
+        padding:50
+        md_bg_color: [0.3, 0.07, 0.06, 1]
+        Button:
+            text:'Cadastro de Matéria Prima'
+            background_color: [1,0,1,0.5]
+            font_size:25
+            on_release: app.root.current = 'cadastro_mprima'
+        Button:
+            text:'Cadastro de Embalagens'
+            background_color: [1,0,1,0.5]
+            font_size:25
+            on_release: app.root.current = 'cadastro_embalagens'
+        Button:
+            text:'Produção Recheios'
+            background_color: [1,0,1,0.5]
+            font_size:25
+            on_release: app.root.current = 'producao_recheios'
+        Button:
+            text:'Produção Chocolates'
+            background_color: [1,0,1,0.5]
+            font_size:25
+            on_release: app.root.current = 'producao_chocolates'
+        Button:
+            text:'Produção Produtos'
+            background_color: [1,0,1,0.5]
+            font_size:25
+            on_release: app.root.current = 'producao_produtos'
+        Button:
+            text:'Vendas'
+            background_color: [1,0,1,0.5]
+            font_size:25
+        Button:
+            text:'Ajuda'
+            background_color: [1,0,1,0.5]
+            font_size:25
+        Button:
+            text:'Sair'
+            background_color: [1,0,1,0.5]
+            font_size:25
+            on_release: app.stop()
+<CadastroMP>
+    MDBoxLayout:
+        orientation:'vertical'
+        md_bg_color: [1, 1, 0.54, 1]
+        ActionBar:
+            ActionView:
+                ActionPrevious:
+                    title:'Matéria Prima'
+                    on_release:app.root.current = 'menu_principal'
+        FloatLayout:
+            MDBoxLayout:
+                padding:50
+                MDTextField:
+                    id:nome_cadmp
+                    hint_text:'Nome primário'
+                    helper_text:'Nome característico do produto Ex: Açucar Refinado, Café Tradicional'
+                    helper_text_mode:"on_focus"
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+                    color_mode: 'custom'
+                    hint_text_color_focus: 0, 0, 0, 1
+                    line_color_focus: 0, 0, 0, 1
+            MDBoxLayout:
+                orientation:'horizontal'
+                padding:50
+                spacing: 10
+                MDTextField:
+                    id:fabr_cadmp
+                    hint_text:'Fabricante'
+                    helper_text:'Quem produziu Ex: Nestlé, Mondeléz'
+                    helper_text_mode:"on_focus"
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.7}
+                    color_mode: 'custom'
+                    hint_text_color_focus: 0, 0, 0, 1
+                    line_color_focus: 0, 0, 0, 1
+                Button:
+                    text:'Verificar'
+                    background_color: [1,0,1,0.5]
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.7}
+                    size_hint_y:0.08
+                    size_hint_x:0.3
+                    on_release:root.busca_fab()
+                MDDropDownItem:
+                    id: clas_cadmp
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.7}
+                    dropdown_bg: [1, 1, 1, 1]
+            MDBoxLayout:
+                orientation:'horizontal'
+                padding:50
+                spacing:10
+                MDTextField:
+                    id: real_cadmp
+                    hint_text:'Valor'
+                    helper_text:'Custo do produto'
+                    helper_text_mode:"on_focus"
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+                    color_mode: 'custom'
+                    hint_text_color_focus: 0, 0, 0, 1
+                    line_color_focus: 0, 0, 0, 1
+                MDTextField:
+                    id: qtdd_cadmp
+                    hint_text:'QTD'
+                    helper_text:'Quantidade contida na embalagem'
+                    helper_text_mode:"on_focus"
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+                    color_mode: 'custom'
+                    hint_text_color_focus: 0, 0, 0, 1
+                    line_color_focus: 0, 0, 0, 1
+                MDDropDownItem:
+                    id:unid_cadmp
+                    text:'XX'
+                    items: ['mm', 'm', 'm²', 'mm²', 'm³','mm³']
+                    dropdown_bg: [1, 1, 1, 1]
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            MDBoxLayout:
+                padding:50
+                MDTextField:
+                    id:desc_cadmp
+                    hint_text:'Descrição'
+                    helper_text:'Descrições ou observações do produto (OPCIONAL)'
+                    helper_text_mode:"on_focus"
+                    multiline: True
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                    color_mode: 'custom'
+                    hint_text_color_focus: 0, 0, 0, 1
+                    line_color_focus: 0, 0, 0, 1
+            MDBoxLayout:
+                padding:50
+                spacing:10
+                orientation:'horizontal'
+                MDRectangleFlatButton:
+                    text:'Cadastrar'
+                    text_color: 1, 1, 1, 1
+                    md_bg_color: 0.43, 0.07, 0.06, 1
+                    line_color:0, 0, 0, 0
+                    on_release:root.mp_capture()
+                MDRectangleFlatButton:
+                    text:'Apagar'
+                    text_color: 1, 1, 1, 1
+                    md_bg_color: 1, 0, 0, 1
+                    line_color:0, 0, 0, 0
+                    on_release:root.mp_erase()
+                MDRectangleFlatButton:
+                    text:'Alterar'
+<CadastroEm>
+    MDBoxLayout:
+        orientation:'vertical'
+        md_bg_color: [1, 1, 0.54, 1]
+        ActionBar:
+            ActionView:
+                ActionPrevious:
+                    title:'Embalagens'
+                    on_release:app.root.current = 'menu_principal'
+        FloatLayout:
+            MDBoxLayout:
+                padding:50
+                orientation:'horizontal'
+                MDTextField:
+                    hint_text:'Nome primário'
+                    helper_text:'Nome característico do produto Ex: Papel Chumbo, caixa Craft'
+                    helper_text_mode:"on_focus"
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+                    color_mode: 'custom'
+                    hint_text_color_focus: 0, 0, 0, 1
+                    line_color_focus: 0, 0, 0, 1
+                MDTextField:
+                    hint_text:'Fabricante'
+                    helper_text:'Quem produziu Ex: Cromus'
+                    helper_text_mode:"on_focus"
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+                    color_mode: 'custom'
+                    hint_text_color_focus: 0, 0, 0, 1
+                    line_color_focus: 0, 0, 0, 1
+            MDBoxLayout:
+                padding:50
+                orientation:'horizontal'
+                MDDropDownItem:
+                    id: tdimensao_em
+                    text:'Tipo Dim.'
+                    items: ['Unidade', 'Área', 'Dimensões','Volume']
+                    dropdown_bg: [1, 1, 1, 1]
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.6}
+                MDTextField:
+                    hint_text:'Valor'
+                    helper_text:'Custo do produto'
+                    helper_text_mode:"on_focus"
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.6}
+                    color_mode: 'custom'
+                    hint_text_color_focus: 0, 0, 0, 1
+                    line_color_focus: 0, 0, 0, 1
+                MDTextField:
+                    hint_text:'QTD'
+                    helper_text:'Quantidade contida na embalagem'
+                    helper_text_mode:"on_focus"
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.6}
+                    color_mode: 'custom'
+                    hint_text_color_focus: 0, 0, 0, 1
+                    line_color_focus: 0, 0, 0, 1
+                MDDropDownItem:
+                    id: unidade_mp
+                    text:'XX'
+                    items: ['kg', 'g', 'mg', 'un', 'L','mL']
+                    dropdown_bg: [1, 1, 1, 1]
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.6}
+            MDBoxLayout:
+                orientation:'horizontal'
+                padding:50
+                MDTextField:
+                    hint_text:'Descrição'
+                    helper_text:'Descrições ou observações do produto (OPCIONAL)'
+                    helper_text_mode:"on_focus"
+                    multiline: True
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+                    color_mode: 'custom'
+                    hint_text_color_focus: 0, 0, 0, 1
+                    line_color_focus: 0, 0, 0, 1
+<ProducaoRec>
+    MDBoxLayout:
+        orientation:'vertical'
+        md_bg_color: [0.54, 1, 0.83, 1]
+        ActionBar:
+            ActionView:
+                ActionPrevious:
+                    title:'Tarefas'
+                    on_release:app.root.current = 'menu_principal'
+<ProducaoCho>
+    MDBoxLayout:
+        orientation:'vertical'
+        md_bg_color: [0.54, 1, 0.83, 1]
+        ActionBar:
+            ActionView:
+                ActionPrevious:
+                    title:'Tarefas'
+                    on_release:app.root.current = 'menu_principal'
+<ProducaoPro>
+    MDBoxLayout:
+        orientation:'vertical'
+        md_bg_color: [0.54, 1, 0.83, 1]
+        ActionBar:
+            ActionView:
+                ActionPrevious:
+                    title:'Tarefas'
+                    on_release:app.root.current = 'menu_principal'
+
+
