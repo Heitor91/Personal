@@ -17,6 +17,7 @@ def commit(script):
         database = sqlite3.connect(r'C:\Users\KV334VU\PycharmProjects\Personal\DocedeMel\docedemel.db')
         db_cursor = database.cursor()
         db_cursor.execute(script)
+        database.commit()
         print(f'Commit realizado')
         if 'SELECT' in script:
             return db_cursor.fetchall()
@@ -44,14 +45,26 @@ def query_select(**kwargs):
     :return:
     """
     query_text = 'SELECT '
+
+    # Estabelece as colunas
     if kwargs['colunas'] is None:
         query_text += '*'
     elif type(kwargs['colunas']) is str:
         query_text += f"{kwargs['colunas']} "
     else:
-        query_text += f"str_sql_split(kwargs['colunas']) "
+        query_text += f"{str_sql_split(kwargs['colunas'])} "
+
+    # Estabelece a tabela
     query_text += f"FROM {kwargs['tabela']} "
-    query_text += f'WHERE {kwargs["condicao"]}' if not kwargs["condicao"] else ''
+
+    # Estabelece a condição
+    if kwargs['condicao'] is None:
+        query_text += ''
+    elif type(kwargs['condicao']) is str:
+        query_text += f"WHERE {kwargs['condicao']}"
+    else:
+        query_text += f"WHERE {str_sql_split(kwargs['condicao'])}"
+    print(query_text)
     return commit(query_text)
 
 

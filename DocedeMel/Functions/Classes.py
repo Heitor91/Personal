@@ -45,8 +45,12 @@ class CADFabricante:
         db_table = 'Base_Fabricantes'
         if self.nome is None:
             pass
-        elif self.ramo is None:
+        elif self.ramo is None and self.nome and self.idfab is None:
             self.idfab = query_select(tabela=db_table,
                                       colunas='ID',
                                       condicao=f'Nome = {str_sql_set(self.nome)}')
             return self.idfab
+        elif self.nome and self.idfab and self.ramo is None:
+            self.ramo = query_select(tabela=db_table,
+                                     colunas='Ramo',
+                                     condicao=f'ID = {self.idfab}')

@@ -7,6 +7,7 @@ from DocedeMel.Database.SQL import query_create
 from kivymd.app import MDApp
 from kivymd.uix.screenmanager import MDScreenManager
 from kivymd.uix.screen import MDScreen
+from kivymd.uix.list import OneLineAvatarIconListItem, CheckboxLeftWidget
 
 
 class ScreenControl(MDScreenManager):
@@ -117,18 +118,19 @@ class CadastroMP(MDScreen):
         """
         self.fabricante.nome = self.ids.fabr_cadmp.text
         result = self.fabricante.db_getter()
+        print(self.fabricante.nome, self.fabricante.ramo)
         print(result)
         if len(result) == 1:
-            self.popup_confab(nfab=result[0])
+            self.fabricante.idfab = self.fabricante.idfab[0]
+            self.popup_confab()
         elif len(result) == 0:
             self.popup_cadfab()
         else:
-            nomes = [fabrica[1] for fabrica in result]
-            self.popup_chofab(nfab=nomes)
+            self.popup_chofab()
 
     def cadastra(self, *args):
         self.fabricante.ramo = self.dialog.content_cls.ids.fabramcad.text
-        print(self.fabricante.ramo, self.fabricante.ramo)
+        print(self.fabricante.nome, self.fabricante.ramo)
         self.fabricante.db_setter()
         self.close()
 
@@ -157,23 +159,21 @@ class CadastroMP(MDScreen):
                                )
         self.dialog.open()
 
-    def popup_confab(self, nfab: str):
+    def popup_confab(self):
         print('LOG:POPConfirmacao')
-        dialog = MDDialog(
-            text=f"Encontrado {nfab} deseja continuar",
-            buttons=[MDFlatButton(text="Cancelar", on_release=self.dialog_close),
-                     MDRaisedButton(text="Confirmar")]
-        )
-        dialog.open()
+        self.fabricante.db_getter()
+        self.dialog = MDDialog(text=f"{self.fabricante.nome} já está cadastrado",
+                               buttons=[MDRaisedButton(text="Ok", on_release=self.close)])
+        self.dialog.open()
 
-    def popup_chofab(self, nfab):
+    def popup_chofab(self):
         print('LOG:POPEscolher')
         dialog = MDDialog(
-            text="teste de popup",
-            buttons=[MDFlatButton(text="Cancelar", on_release=self.dialog_close),
+            title="Mais de um fabricante encontrado:",
+            buttons=[MDFlatButton(text="Cancelar", on_release=self.close),
                      MDRaisedButton(text="Cadastrar")]
         )
-        dialog.open()
+        self.dialog.open()
 
     # Captura dos dados para gravar na base de matéria-prima
 
@@ -241,6 +241,7 @@ class MyerpApp(MDApp):
     """
 
     """
+
     def build(self):
         startsqlite()
         return ScreenControl()
