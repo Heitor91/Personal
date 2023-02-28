@@ -117,13 +117,13 @@ class CadastroMP(MDScreen):
         :return: None
         """
         self.fabricante.nome = self.ids.fabr_cadmp.text
-        result = self.fabricante.db_getter()
+        self.fabricante.db_getter_id_w_nome()
         print(self.fabricante.nome, self.fabricante.ramo)
-        print(result)
-        if len(result) == 1:
-            self.fabricante.idfab = self.fabricante.idfab[0]
+        print(self.fabricante.idfab)
+        if type(self.fabricante.idfab) is int:
+            self.fabricante.idfab = self.fabricante.idfab
             self.popup_confab()
-        elif len(result) == 0:
+        elif type(self.fabricante.idfab) == list:
             self.popup_cadfab()
         else:
             self.popup_chofab()
@@ -161,7 +161,7 @@ class CadastroMP(MDScreen):
 
     def popup_confab(self):
         print('LOG:POPConfirmacao')
-        self.fabricante.db_getter()
+        self.fabricante.db_getter_ramo_w_id()
         self.dialog = MDDialog(text=f"{self.fabricante.nome} já está cadastrado",
                                buttons=[MDRaisedButton(text="Ok", on_release=self.close)])
         self.dialog.open()

@@ -2,6 +2,11 @@ from DocedeMel.Database.SQL import query_insert, query_select
 
 
 def str_sql_set(text: str):
+    """
+    Retorna sequencia em formato string para usar em uma query text ao buscar um determinado item no banco de dados.
+    :param text:
+    :return:
+    """
     return text.join(['\'', '\''])
 
 
@@ -33,6 +38,7 @@ class CADMateriaPrima:
 
 class CADFabricante:
     def __init__(self, idfab=None, nome=None, ramo=None):
+        self.db_table = 'Base_Fabricantes'
         self.idfab = idfab
         self.nome = nome
         self.ramo = ramo
@@ -40,17 +46,18 @@ class CADFabricante:
     def db_setter(self):
         dados = {'Nome': str_sql_set(self.nome), 'Ramo': str_sql_set(self.ramo)}
         query_insert(tabela='Base_Fabricantes', dados=dados)
+        self.db_getter_id_w_nome()
 
-    def db_getter(self):
-        db_table = 'Base_Fabricantes'
-        if self.nome is None:
-            pass
-        elif self.ramo is None and self.nome and self.idfab is None:
-            self.idfab = query_select(tabela=db_table,
-                                      colunas='ID',
-                                      condicao=f'Nome = {str_sql_set(self.nome)}')
-            return self.idfab
-        elif self.nome and self.idfab and self.ramo is None:
-            self.ramo = query_select(tabela=db_table,
-                                     colunas='Ramo',
-                                     condicao=f'ID = {self.idfab}')
+    def db_getter_id_w_nome(self):
+        result = query_select(tabela=self.db_table,
+                              colunas='ID',
+                              condicao=f'Nome = {str_sql_set(self.nome)}')
+        self.idfab = result[0][0] if len(result) == 1 else result
+
+    def db_getter_ramo_w_id(self):
+        self.ramo = query_select(tabela=self.db_table,
+                                 colunas='Ramo',
+                                 condicao=f'ID = {self.idfab}')
+
+    def db_getter_nome_w_id(self):
+        pass
