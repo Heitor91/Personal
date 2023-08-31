@@ -1,3 +1,9 @@
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.button import MDFlatButton, MDRaisedButton
+from kivymd.uix.dialog import MDDialog
+from kivymd.uix.label import MDLabel
+from kivymd.uix.selectioncontrol import MDCheckbox
+from kivymd.uix.textfield import MDTextField
 from DocedeMel.Database.SQL import query_insert, query_select
 
 
@@ -11,6 +17,10 @@ def str_sql_set(text: str):
 
 
 class CADMateriaPrima:
+    """
+    Classe resposável por gerenciar os dados do formulário de matéria-prima.
+    """
+
     def __init__(self, formulario: dict):
         self.nome = self.carrega_dados(formulario, 0)
         self.fabricante = self.carrega_dados(formulario, 1)
@@ -37,7 +47,12 @@ class CADMateriaPrima:
 
 
 class CADFabricante:
+    """
+    Gerencia o cadastro de fabricantes
+    """
+
     def __init__(self, idfab=None, nome=None, ramo=None):
+        self.dialog = None
         self.db_table = 'Base_Fabricantes'
         self.idfab = idfab
         self.nome = nome
@@ -61,3 +76,77 @@ class CADFabricante:
 
     def db_getter_nome_w_id(self):
         pass
+
+    def popup_cadfab(self):
+        print('LOG:POPCadastrar')
+        self.dialog = MDDialog(title="Cadastrar empresa:",
+                               type="custom",
+                               content_cls=MDBoxLayout(MDTextField(id="fabnomcad",
+                                                                   hint_text="Fabricante",
+                                                                   text=self.nome,
+                                                                   readonly=True),
+                                                       MDBoxLayout(
+                                                           MDCheckbox(id="consumiveis_checkbox", group="ramo", ),
+                                                           MDLabel(text="Consumíveis"),
+                                                           MDCheckbox(id="embalagens_checkbox", group="ramo"),
+                                                           MDLabel(text="Embalagens"),
+                                                           orientation="horizontal",
+                                                           spacing="10dp",
+                                                           size_hint_y=None,
+                                                           height="40dp"),
+                                                       orientation="vertical",
+                                                       spacing="12dp",
+                                                       size_hint_y=None,
+                                                       height="120dp", ),
+                               buttons=[MDFlatButton(text="Cancelar", on_release=lambda x: self.close()),
+                                        MDRaisedButton(text="Cadastrar",
+                                                       on_release=lambda x: self.cadastra(consumivel=self.dialog.content_cls.ids.consumiveis_checkbox.active)
+                                                       )
+                                        ]
+                               )
+        print(self.nome)
+        self.dialog.open()
+
+    def popup_confab(self):
+        print('LOG:POPConfirmacao')
+        self.db_getter_ramo_w_id()
+        self.dialog = MDDialog(text=f"{self.nome} já está cadastrado",
+                               buttons=[MDRaisedButton(text="Ok", on_release=lambda x: self.close())],
+                               auto_dismiss=True)
+        self.dialog.open()
+
+    def popup_opcfab(self):
+        print('LOG:POPEscolher')
+        self.dialog = MDDialog(
+            title="Mais de um fabricante encontrado:",
+            buttons=[MDFlatButton(text="Cancelar", on_release=self.close),
+                     MDRaisedButton(text="Cadastrar")]
+        )
+        self.dialog.open()
+
+    def cadastra(self, **kwargs):
+        print("Start_CADASTRO")
+        self.ramo = "Consumíveis" if kwargs.get("consumivel",False) else "Embalagens"
+        print(self.nome, self.ramo)
+        self.db_setter()
+        self.close()
+
+    def close(self, *args):
+        return self.dialog.dismiss(force=True)
+
+
+class CADEmbalagem:
+    def __init__(self, formulario: dict):
+        self.nome = self.carrega_dados(dados=formulario, index=0)
+        self.fabricante = self.carrega_dados(dados=formulario, index=0)
+        self.tipo_dim = self.carrega_dados(dados=formulario, index=0)
+        self.dimensao = self.carrega_dados(dados=formulario, index=0)
+        self.quantidade = self.carrega_dados(dados=formulario, index=0)
+        self.valor = self.carrega_dados(dados=formulario, index=0)
+        self.val_unitario = self.carrega_dados(dados=formulario, index=0)
+        self.descricao = self.carrega_dados(dados=formulario, index=0)
+
+    @classmethod
+    def carrega_dados(cls, dados, index):
+        chaves = ('nome', 'fabr', 'clas', 'desc', 'valor', 'unid', 'quant', 'v_un')
+        return str_sql_set(dados[chaves[index]]) if type(dados[chaves[index]]) is str else str(dados[chaves[index]])

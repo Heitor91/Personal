@@ -1,24 +1,24 @@
+from kivy.metrics import dp
+from kivy.uix.screenmanager import NoTransition
 from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.button import MDFlatButton, MDRaisedButton
-from kivymd.uix.dialog import MDDialog
-from kivymd.uix.textfield import MDTextField
+from kivymd.uix.menu import MDDropdownMenu
 from DocedeMel.Functions.Classes import CADMateriaPrima as cadMP, CADFabricante as cadF
 from DocedeMel.Database.SQL import query_create
 from kivymd.app import MDApp
 from kivymd.uix.screenmanager import MDScreenManager
 from kivymd.uix.screen import MDScreen
-from kivymd.uix.list import OneLineAvatarIconListItem, CheckboxLeftWidget
+from kivy.core.window import Window, WindowBase
 
 
 class ScreenControl(MDScreenManager):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, transition=NoTransition(), **kwargs)
 
 
 def startsqlite():
     """
-
-    :return:
+    Rotina que checa a existência das tabelas, caso não exista, cria as tabelas no data base.
+    :return:None
     """
     db_struct = {'Base_Fabricantes': ('ID INTEGER PRIMARY KEY',
                                       'Nome TEXT',
@@ -108,72 +108,64 @@ class CadFabPop(MDBoxLayout):
 
 
 class CadastroMP(MDScreen):
-    dialog = None
-    fabricante = cadF()
+    """
+    Classe do formulário gráfico do cadastro de matérias-primas. Inicializa a variável auto instanciado
+    """
 
-    def busca_fab(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fabricante = cadF()
+        self.menu = None
+
+    def perform_actions(self):
+        self.mp_erase()  # Chama o método mp_erase
+        self.manager.current = 'menu_principal'
+
+    # Trecho de controle do item classificação
+    def lista_class(self):
+        menu_items = [{"viewclass": "OneLineListItem",
+                       "text": f"{item}",
+                       "height": dp(35),
+                       "on_release": lambda x=f"{item}": self.set_class(x),
+                       } for item in ['Animal', 'Planta', 'Outro']
+                      ]
+        self.menu = MDDropdownMenu(
+            caller=self.ids.clas_cadmp,
+            items=menu_items,
+            position="bottom",
+            width_mult=2, )
+        self.menu.open()
+        self.menu.bind()
+
+    def set_class(self, text_item):
+        self.ids.clas_cadmp.set_item(text_item)
+        self.menu.dismiss()
+
+    def lista_unidade(self):
+        menu_items = [{"viewclass": "OneLineListItem",
+                       "text": f"{item}",
+                       "height": dp(35),
+                       "on_release": lambda x=f"{item}": self.set_unidade(x),
+                       } for item in ['Kg', 'g', 'L', 'mL', 'm³', 'mm³']
+                      ]
+        self.menu = MDDropdownMenu(
+            caller=self.ids.unid_cadmp,
+            items=menu_items,
+            position="bottom",
+            width_mult=1.5, )
+        self.menu.open()
+        self.menu.bind()
+
+    def set_unidade(self, text_item):
+        self.ids.unid_cadmp.set_item(text_item)
+        self.menu.dismiss()
+
+    def call_busca_fab(self):
         """
         Efetua busca no banco de dados e retorna os dados encontrados.
         :return: None
         """
-        self.fabricante.nome = self.ids.fabr_cadmp.text
-        self.fabricante.db_getter_id_w_nome()
-        print(self.fabricante.nome, self.fabricante.ramo)
-        print(self.fabricante.idfab)
-        if type(self.fabricante.idfab) is int:
-            self.fabricante.idfab = self.fabricante.idfab
-            self.popup_confab()
-        elif type(self.fabricante.idfab) == list:
-            self.popup_cadfab()
-        else:
-            self.popup_chofab()
-
-    def cadastra(self, *args):
-        self.fabricante.ramo = self.dialog.content_cls.ids.fabramcad.text
-        print(self.fabricante.nome, self.fabricante.ramo)
-        self.fabricante.db_setter()
-        self.close()
-
-    def close(self, *args):
-        return self.dialog.dismiss(force=True)
-
-    def popup_cadfab(self):
-        print('LOG:POPCadastrar')
-        print(self.fabricante.nome)
-        self.dialog = MDDialog(title="Cadastrar empresa:",
-                               type="custom",
-                               content_cls=MDBoxLayout(MDTextField(id="fabnomcad",
-                                                                   hint_text="Fabricante",
-                                                                   text=self.fabricante.nome),
-                                                       MDTextField(id="fabramcad",
-                                                                   hint_text="Ramo", ),
-                                                       orientation="vertical",
-                                                       spacing="12dp",
-                                                       size_hint_y=None,
-                                                       height="120dp", ),
-                               buttons=[MDFlatButton(text="Cancelar", on_release=self.close),
-                                        MDRaisedButton(text="Cadastrar",
-                                                       on_release=self.cadastra
-                                                       )
-                                        ]
-                               )
-        self.dialog.open()
-
-    def popup_confab(self):
-        print('LOG:POPConfirmacao')
-        self.fabricante.db_getter_ramo_w_id()
-        self.dialog = MDDialog(text=f"{self.fabricante.nome} já está cadastrado",
-                               buttons=[MDRaisedButton(text="Ok", on_release=self.close)])
-        self.dialog.open()
-
-    def popup_chofab(self):
-        print('LOG:POPEscolher')
-        dialog = MDDialog(
-            title="Mais de um fabricante encontrado:",
-            buttons=[MDFlatButton(text="Cancelar", on_release=self.close),
-                     MDRaisedButton(text="Cadastrar")]
-        )
-        self.dialog.open()
+        busca_fab(input_nome=self.ids.fabr_cadmp.text)
 
     # Captura dos dados para gravar na base de matéria-prima
 
@@ -188,10 +180,10 @@ class CadastroMP(MDScreen):
         valores = [
             self.ids.nome_cadmp.text,
             self.fabricante.idfab,
-            '1',
+            self.ids.clas_cadmp.text,
             self.ids.desc_cadmp.text,
             self.ids.real_cadmp.text,
-            'ml',
+            self.ids.unid_cadmp.text,
             self.ids.qtdd_cadmp.text,
             float(self.ids.real_cadmp.text) / int(self.ids.qtdd_cadmp.text)
         ]
@@ -211,30 +203,52 @@ class CadastroMP(MDScreen):
 
     def mp_erase(self):
         """
-        Limpa campos do formulário
+        Limpa campos do formulário e reinicializa o objeto instanciado.
         :return:
         """
         self.ids.nome_cadmp.text = ''
         self.ids.fabr_cadmp.text = ''
+        self.ids.clas_cadmp.text = '(Classe Produto)'
         self.ids.desc_cadmp.text = ''
         self.ids.real_cadmp.text = ''
         self.ids.qtdd_cadmp.text = ''
+        self.ids.unid_cadmp.text = '(UN)'
+        self.fabricante.nome = None
+        self.fabricante.ramo = None
+        self.fabricante.idfab = None
 
 
 class CadastroEm(MDScreen):
-    pass
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fabricante = cadF()
+
+    def perform_actions(self):
+        self.mp_erase()  # Chama o método mp_erase
+        self.manager.current = 'menu_principal'
+    def emb_capture(self):
+        pass
+
+    def emb_erase(self):
+        pass
 
 
 class ProducaoRec(MDScreen):
-    pass
+    def perform_actions(self):
+        self.mp_erase()  # Chama o método mp_erase
+        self.manager.current = 'menu_principal'
 
 
 class ProducaoCho(MDScreen):
-    pass
+    def perform_actions(self):
+        self.mp_erase()  # Chama o método mp_erase
+        self.manager.current = 'menu_principal'
 
 
 class ProducaoPro(MDScreen):
-    pass
+    def perform_actions(self):
+        self.mp_erase()  # Chama o método mp_erase
+        self.manager.current = 'menu_principal'
 
 
 class MyerpApp(MDApp):
@@ -244,7 +258,28 @@ class MyerpApp(MDApp):
 
     def build(self):
         startsqlite()
+        Window.fullscreen = True
+        WindowBase.fullscreen = 'auto'
         return ScreenControl()
+
+
+def busca_fab(**kwargs):
+    """
+    Efetua busca no banco de dados e retorna os dados encontrados.
+    :return: None
+    """
+    fabricante = cadF()
+    fabricante.nome = kwargs["input_nome"]
+    fabricante.db_getter_id_w_nome()
+    print(fabricante.nome, fabricante.ramo)
+    print(fabricante.idfab)
+    if type(fabricante.idfab) is int:
+        fabricante.idfab = fabricante.idfab
+        fabricante.popup_confab()
+    elif type(fabricante.idfab) == list and len(fabricante.idfab) == 0:
+        fabricante.popup_cadfab()
+    else:
+        fabricante.popup_opcfab()
 
 
 if __name__ == '__main__':
@@ -254,3 +289,16 @@ if __name__ == '__main__':
     Chocolate	    [0.43, 0.07, 0.06, 1]
     VerdePastel	    [0.54, 1, 0.83, 1]
     AmareloPastel	[1, 1, 0.54, 1]"""
+"""Comentários sobre o uso de comandos de botões: Quando você usa um lambda para envolver a chamada de um método em 
+Python, você cria uma função anônima que encapsula a chamada. Essa função anônima mantém uma referência ao contexto 
+em que foi definida, o que inclui o valor atual das variáveis locais no momento da definição. Ao passar essa função 
+anônima como argumento para um evento, como o on_release do KivyMD, ela é executada quando o evento ocorre. Nesse 
+momento, a função anônima tem acesso às variáveis locais capturadas no momento da definição, incluindo a referência 
+correta ao objeto self. Por outro lado, ao chamar diretamente um método sem o uso de lambda, a chamada é feita 
+imediatamente e o valor atual da variável self no momento da chamada é usado. Isso pode causar problemas se a 
+referência a self não estiver corretamente associada ao objeto desejado. Ao usar o lambda, você cria uma função 
+intermediária que "embala" a chamada do método e garante que ela seja executada no contexto correto, preservando a 
+referência correta ao objeto self da classe. Essa abordagem com lambda garante que a chamada do método close ou 
+cadastra ocorra com a referência correta a self, permitindo que o método seja executado corretamente. É importante 
+ressaltar que outras variáveis e fatores podem influenciar o resultado, e é fundamental revisar cuidadosamente o 
+código para garantir que todas as referências e chamadas de métodos estejam corretamente configuradas."""

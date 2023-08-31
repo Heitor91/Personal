@@ -13,123 +13,161 @@
         name:'producao_produtos'
 <MenuPrincipal>
     MDBoxLayout:
-        orientation:'vertical'
-        spacing:10
-        padding:50
-        md_bg_color: [0.3, 0.07, 0.06, 1]
-        Button:
-            text:'Cadastro de Matéria Prima'
-            background_color: [1,0,1,0.5]
-            font_size:25
-            on_release: app.root.current = 'cadastro_mprima'
-        Button:
-            text:'Cadastro de Embalagens'
-            background_color: [1,0,1,0.5]
-            font_size:25
-            on_release: app.root.current = 'cadastro_embalagens'
-        Button:
-            text:'Produção Recheios'
-            background_color: [1,0,1,0.5]
-            font_size:25
-            on_release: app.root.current = 'producao_recheios'
-        Button:
-            text:'Produção Chocolates'
-            background_color: [1,0,1,0.5]
-            font_size:25
-            on_release: app.root.current = 'producao_chocolates'
-        Button:
-            text:'Produção Produtos'
-            background_color: [1,0,1,0.5]
-            font_size:25
-            on_release: app.root.current = 'producao_produtos'
-        Button:
-            text:'Vendas'
-            background_color: [1,0,1,0.5]
-            font_size:25
-        Button:
-            text:'Ajuda'
-            background_color: [1,0,1,0.5]
-            font_size:25
-        Button:
-            text:'Sair'
-            background_color: [1,0,1,0.5]
-            font_size:25
-            on_release: app.stop()
+        orientation:'horizontal'
+        MDBoxLayout:
+            orientation:'vertical'
+            spacing:10
+            padding:50
+            md_bg_color: [0.3, 0.07, 0.06, 1]
+            Button:
+                text:'Cadastro de Matéria Prima'
+                background_color: [1,0,1,0.5]
+                font_size:25
+                on_release: app.root.current = 'cadastro_mprima'
+            Button:
+                text:'Cadastro de Embalagens'
+                background_color: [1,0,1,0.5]
+                font_size:25
+                on_release: app.root.current = 'cadastro_embalagens'
+            Button:
+                text:'Produção Recheios'
+                background_color: [1,0,1,0.5]
+                font_size:25
+                on_release: app.root.current = 'producao_recheios'
+            Button:
+                text:'Produção Chocolates'
+                background_color: [1,0,1,0.5]
+                font_size:25
+                on_release: app.root.current = 'producao_chocolates'
+            Button:
+                text:'Produção Produtos'
+                background_color: [1,0,1,0.5]
+                font_size:25
+                on_release: app.root.current = 'producao_produtos'
+            Button:
+                text:'Vendas'
+                background_color: [1,0,1,0.5]
+                font_size:25
+            Button:
+                text:'Ajuda'
+                background_color: [1,0,1,0.5]
+                font_size:25
+            Button:
+                text:'Configurações'
+                background_color: [1,0,1,0.5]
+                font_size:25
+            Button:
+                text:'Sair'
+                background_color: [1,0,1,0.5]
+                font_size:25
+                on_release: app.stop()
+        MDBoxLayout:
+            orientation:'vertical'
+            spacing:10
+            padding:50
+            md_bg_color: [0.3, 0.07, 0.06, 1]
 <CadastroMP>
     MDBoxLayout:
         orientation:'vertical'
         md_bg_color: [1, 1, 0.54, 1]
-        ActionBar:
-            ActionView:
-                ActionPrevious:
-                    title:'Matéria Prima'
-                    on_release:app.root.current = 'menu_principal'
+        MDTopAppBar:
+            title: 'Matéria Prima'
+            left_action_items: [["arrow-left", lambda x: root.perform_actions()]]
+            md_bg_color: [0.7, 0.7, 0.54, 1]
         FloatLayout:
             MDBoxLayout:
-                padding:50
+                pos_hint: {'x': 0.05, 'y': 1 - 0.2}
+                size_hint: (0.9, 0.1)
                 MDTextField:
                     id:nome_cadmp
                     hint_text:'Nome primário'
-                    helper_text:'Nome característico do produto Ex: Açucar Refinado, Café Tradicional'
+                    helper_text:'Nome característico do produto Ex: Refinado, Tradicional, Meio-Amargo'
                     helper_text_mode:"on_focus"
-                    pos_hint: {'center_x': 0.5, 'center_y': 0.9}
                     color_mode: 'custom'
                     hint_text_color_focus: 0, 0, 0, 1
                     line_color_focus: 0, 0, 0, 1
             MDBoxLayout:
                 orientation:'horizontal'
-                padding:50
-                spacing: 10
-                MDTextField:
-                    id:fabr_cadmp
-                    hint_text:'Fabricante'
-                    helper_text:'Quem produziu Ex: Nestlé, Mondeléz'
-                    helper_text_mode:"on_focus"
-                    pos_hint: {'center_x': 0.5, 'center_y': 0.7}
-                    color_mode: 'custom'
-                    hint_text_color_focus: 0, 0, 0, 1
-                    line_color_focus: 0, 0, 0, 1
-                Button:
-                    text:'Verificar'
-                    background_color: [1,0,1,0.5]
-                    pos_hint: {'center_x': 0.5, 'center_y': 0.7}
-                    size_hint_y:0.08
-                    size_hint_x:0.3
-                    on_release:root.busca_fab()
-                MDDropDownItem:
-                    id: clas_cadmp
-                    pos_hint: {'center_x': 0.5, 'center_y': 0.7}
-                    dropdown_bg: [1, 1, 1, 1]
+                pos_hint: {'x': 0.05, 'y': 0.6}
+                size_hint: (0.9, 0.1)
+                FloatLayout:
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        pos_hint: {'x': 0, 'y': 0}
+                        size_hint: (0.5, 1)
+                        MDTextField:
+                            id:fabr_cadmp
+                            hint_text:'Fabricante'
+                            helper_text:'Quem produziu Ex: Nestlé, Mondeléz'
+                            helper_text_mode:"on_focus"
+                            color_mode: 'custom'
+                            hint_text_color_focus: 0, 0, 0, 1
+                            line_color_focus: 0, 0, 0, 1
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        pos_hint: {'x': 0.5, 'y': 0}
+                        size_hint: (0.3, 1)
+                        padding: 10
+                        spacing:10
+                        Button:
+                            text:'Verificar'
+                            background_color: [1,0,1,0.5]
+                            pos_hint: {'x': 0.0, 'y': 0}
+                            on_release:root.call_busca_fab()
+                        Button:
+                            text:'Buscar'
+                            background_color: [1,0,1,0.5]
+                            pos_hint: {'x': 0.5, 'y': 0}
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        size_hint: (0.2, 1)
+                        pos_hint: {'x': 0.8, 'y': 0}
+                        padding:20
+                        MDDropDownItem:
+                            id: clas_cadmp
+                            text: '(Classe Produto)'
+                            on_release:root.lista_class()
             MDBoxLayout:
                 orientation:'horizontal'
-                padding:50
-                spacing:10
-                MDTextField:
-                    id: real_cadmp
-                    hint_text:'Valor'
-                    helper_text:'Custo do produto'
-                    helper_text_mode:"on_focus"
-                    pos_hint: {'center_x': 0.5, 'center_y': 0.3}
-                    color_mode: 'custom'
-                    hint_text_color_focus: 0, 0, 0, 1
-                    line_color_focus: 0, 0, 0, 1
-                MDTextField:
-                    id: qtdd_cadmp
-                    hint_text:'QTD'
-                    helper_text:'Quantidade contida na embalagem'
-                    helper_text_mode:"on_focus"
-                    pos_hint: {'center_x': 0.5, 'center_y': 0.3}
-                    color_mode: 'custom'
-                    hint_text_color_focus: 0, 0, 0, 1
-                    line_color_focus: 0, 0, 0, 1
-                MDDropDownItem:
-                    id:unid_cadmp
-                    text:'XX'
-                    items: ['mm', 'm', 'm²', 'mm²', 'm³','mm³']
-                    dropdown_bg: [1, 1, 1, 1]
-                    pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+                size_hint: (0.9, 0.1)
+                pos_hint: {'x': 0.05, 'y': 0.4}
+                FloatLayout:
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        size_hint: (0.3, 1)
+                        pos_hint: {'x': 0, 'y': 0}
+                        MDTextField:
+                            id: real_cadmp
+                            hint_text:'Valor'
+                            helper_text:'Custo do produto'
+                            helper_text_mode:"on_focus"
+                            color_mode: 'custom'
+                            hint_text_color_focus: 0, 0, 0, 1
+                            line_color_focus: 0, 0, 0, 1
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        size_hint: (0.3, 1)
+                        pos_hint: {'x': 0.35, 'y': 0}
+                        MDTextField:
+                            id: qtdd_cadmp
+                            hint_text:'QTD'
+                            helper_text:'Quantidade contida na embalagem'
+                            helper_text_mode:"on_focus"
+                            color_mode: 'custom'
+                            hint_text_color_focus: 0, 0, 0, 1
+                            line_color_focus: 0, 0, 0, 1
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        size_hint: (0.3, 0.7)
+                        pos_hint: {'x': 0.7, 'y': 0.3}
+                        MDDropDownItem:
+                            id:unid_cadmp
+                            text: '(UN)'
+                            on_release:root.lista_unidade()
             MDBoxLayout:
-                padding:50
+                orientation:'horizontal'
+                size_hint: (0.9, 0.1)
+                pos_hint: {'x': 0.05, 'y': 0.2}
                 MDTextField:
                     id:desc_cadmp
                     hint_text:'Descrição'
@@ -141,35 +179,39 @@
                     hint_text_color_focus: 0, 0, 0, 1
                     line_color_focus: 0, 0, 0, 1
             MDBoxLayout:
-                padding:50
-                spacing:10
                 orientation:'horizontal'
+                size_hint: (0.9, 0.1)
+                pos_hint: {'x': 0.05, 'y': 0}
+                spacing: 20
                 MDRectangleFlatButton:
                     text:'Cadastrar'
                     text_color: 1, 1, 1, 1
-                    md_bg_color: 0.43, 0.07, 0.06, 1
-                    line_color:0, 0, 0, 0
+                    md_bg_color: [0.43, 0.07, 0.06, 1]
+                    line_color:[0, 0, 0, 0]
+                    pos_hint: {'x': 0.1, 'y': 0.5}
                     on_release:root.mp_capture()
                 MDRectangleFlatButton:
                     text:'Apagar'
                     text_color: 1, 1, 1, 1
                     md_bg_color: 1, 0, 0, 1
                     line_color:0, 0, 0, 0
+                    pos_hint: {'x': 0.25, 'y': 0.5}
                     on_release:root.mp_erase()
                 MDRectangleFlatButton:
                     text:'Alterar'
+                    pos_hint: {'x': 0.5, 'y': 0.5}
 <CadastroEm>
     MDBoxLayout:
         orientation:'vertical'
         md_bg_color: [1, 1, 0.54, 1]
-        ActionBar:
-            ActionView:
-                ActionPrevious:
-                    title:'Embalagens'
-                    on_release:app.root.current = 'menu_principal'
+        MDTopAppBar:
+            title: 'Embalagens'
+            left_action_items: [["arrow-left", lambda x: root.perform_actions()]]
+            md_bg_color: [0.7, 0.7, 0.54, 1]
         FloatLayout:
             MDBoxLayout:
                 padding:50
+                spacing:10
                 orientation:'horizontal'
                 MDTextField:
                     hint_text:'Nome primário'
@@ -189,6 +231,7 @@
                     line_color_focus: 0, 0, 0, 1
             MDBoxLayout:
                 padding:50
+                spacing:10
                 orientation:'horizontal'
                 MDDropDownItem:
                     id: tdimensao_em
@@ -221,6 +264,7 @@
             MDBoxLayout:
                 orientation:'horizontal'
                 padding:50
+                spacing:10
                 MDTextField:
                     hint_text:'Descrição'
                     helper_text:'Descrições ou observações do produto (OPCIONAL)'
@@ -234,28 +278,57 @@
     MDBoxLayout:
         orientation:'vertical'
         md_bg_color: [0.54, 1, 0.83, 1]
-        ActionBar:
-            ActionView:
-                ActionPrevious:
-                    title:'Tarefas'
-                    on_release:app.root.current = 'menu_principal'
+        MDTopAppBar:
+            title: 'Recheios'
+            left_action_items: [["arrow-left", lambda x: root.perform_actions()]]
+            md_bg_color: [0.7, 0.7, 0.54, 1]
+        FloatLayout:
+            MDBoxLayout:
+                padding:50
+                orientation:'horizontal'
+                MDTextField:
+                    hint_text:'Nome do recheio'
+                    pos_hint: {'center_x': 0.5, 'center_y': 1.0}
+                    color_mode: 'custom'
+                    hint_text_color_focus: 0, 0, 0, 1
+                    line_color_focus: 0, 0, 0, 1
+            MDBoxLayout:
+                padding:50
+                orientation:'horizontal'
+                MDTextField:
+                    hint_text:'Buscar ingrediente'
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+                    color_mode: 'custom'
+                    hint_text_color_focus: 0, 0, 0, 1
+                    line_color_focus: 0, 0, 0, 1
+                Button:
+                    text:'Buscar'
+                    background_color: [1,0,1,0.5]
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+                    size_hint_y:0.08
+                    size_hint_x:0.5
+            MDBoxLayout:
+                padding:50
+                orientation:'horizontal'
 <ProducaoCho>
     MDBoxLayout:
         orientation:'vertical'
         md_bg_color: [0.54, 1, 0.83, 1]
-        ActionBar:
-            ActionView:
-                ActionPrevious:
-                    title:'Tarefas'
-                    on_release:app.root.current = 'menu_principal'
+        MDTopAppBar:
+            title: 'Chocolates'
+            left_action_items: [["arrow-left", lambda x: root.perform_actions()]]
+            md_bg_color: [0.7, 0.7, 0.54, 1]
+        FloatLayout:
+            MDBoxLayout:
+                MDTextField:
+                    hint_text: 'Nome da Receita'
+
 <ProducaoPro>
     MDBoxLayout:
         orientation:'vertical'
         md_bg_color: [0.54, 1, 0.83, 1]
-        ActionBar:
-            ActionView:
-                ActionPrevious:
-                    title:'Tarefas'
-                    on_release:app.root.current = 'menu_principal'
-
+        MDTopAppBar:
+            title: 'Produtos'
+            left_action_items: [["arrow-left", lambda x: root.perform_actions()]]
+            md_bg_color: [0.7, 0.7, 0.54, 1]
 
